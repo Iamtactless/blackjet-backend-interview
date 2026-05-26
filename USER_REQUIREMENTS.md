@@ -2,14 +2,16 @@
 
 ## Context
 
-Blackjet's `sec-api` contains a membership lifecycle with real business rules around:
+This assignment is about building a simplified membership downgrade flow for a subscription-based product.
 
-- membership downgrade eligibility
-- future bookings and renewal dates
-- immediate vs scheduled plan changes
-- durable async processing
+The goal is to handle practical rules around:
 
-For this exercise, build a simplified version of that flow.
+- when a member is allowed to downgrade
+- how upcoming bookings affect the downgrade
+- whether the downgrade happens now or later
+- how scheduled downgrades are processed reliably
+
+You should design and implement a small service that handles those rules clearly and reliably.
 
 ## What To Build
 
@@ -19,12 +21,20 @@ Implement a small service that supports:
 
 ## Core Rules
 
+- Unlimited -> Unlimited elite
+- Your task will implement the API to downgrade from Unlimited Elite to Unlimited
 - Only a user on `UNLIMITED_ELITE` can downgrade.
 - The target plan is always `UNLIMITED`.
 - Count the user's bookings whose departure time is after the user's renewal date.
 - If future bookings after renewal date are greater than `2`, reject the downgrade.
 - If future bookings after renewal date are `0`, apply the downgrade immediately.
 - If future bookings after renewal date are `1..2`, store a scheduled downgrade to be executed at the renewal date.
+
+## Rejection Edge Cases
+
+- If the user has no membership, return HTTP `400` with `{status: 'REJECTED'}`.
+- If the user is already on `UNLIMITED`, return HTTP `400` with `{status: 'REJECTED'}`.
+- If the downgrade is rejected for any rule failure, including having more than `2` future bookings after the renewal date, return HTTP `400` with `{status: 'REJECTED'}`.
 
 ## Durable Async Requirement
 
@@ -40,7 +50,7 @@ You should design the durable async approach yourself. The starter intentionally
 
 ## What Is Provided
 
-Inside `template/` you will find:
+Inside the codebase, you will find:
 
 - a minimal TypeScript starter
 - a running Nest starter
@@ -52,7 +62,7 @@ Inside `template/` you will find:
 - starter structure including `src/app.module.ts`
 - starter structure including `src/main.ts`
 - starter structure including `src/shared/...`
-- starter structure including `src/modules/health/...`
+- starter structure including `src/modules/health/...` and unit test `src/modules/health/application/use-cases/get-health/get-health.use-case.spec.ts`
 - starter structure including `src/modules/user/...`
 - starter structure including `src/modules/membership/...`
 
@@ -68,16 +78,12 @@ Important:
 - your schema design
 - durable async implementation for scheduled downgrades
 - clear setup instructions
-- tests for the important business rules
+- tests for use cases
 
 ## Non-Goals
 
 You do not need to implement:
 - authentication
-
-## Suggested Timebox
-
-Aim for roughly `3-5 hours`.
 
 You do not need to over-polish the app. We care more about correctness, tradeoffs, and code quality than breadth.
 

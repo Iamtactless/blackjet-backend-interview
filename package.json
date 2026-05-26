@@ -7,7 +7,8 @@
     "dev": "CHOKIDAR_USEPOLLING=1 nest start --watch",
     "start": "node dist/main.js",
     "db:seed": "pnpm run build && node dist/scripts/seed.js",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "jest"
   },
   "dependencies": {
     "@nestjs/common": "11.1.1",
@@ -25,8 +26,11 @@
     "@nestjs/cli": "^11.0.21",
     "@swc/cli": "^0.8.1",
     "@swc/core": "^1.15.33",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
     "@types/node": "22.15.18",
     "@types/pg": "8.15.6",
+    "jest": "^30.4.2",
     "typescript": "5.7.3"
   }
 }
